@@ -13,6 +13,7 @@ Segmentation
 1. [Ilastik](./other.html#ilastik)
 1. [Cypository](./other.html#cypository)
 1. [Mesmer](./other.html#mesmer)
+1. [Cellpose](./other.html#cellpose)
 
 Clustering and cell type inference
 1. [Clustering](./other.html#clustering) 
@@ -137,6 +138,46 @@ A stitched and registered ``.ome.tif``, preferably flat field corrected. Nextflo
 A segmentation mask, similar to the ones produced by S3segmenter. Nextflow will write these files directly to `segmentation/`.
 
 ### Optional arguments
+
+| Name | Description | Default Value |
+| :--- | :--- | :--- |
+| `--nuclear-channel` | The numerical index of the channel(s) from `nuclear-image` to select. If multiple values are passed, the channels will be summed. | `0` |
+| `--compartment` | Predict nuclear or whole-cell segmentation. | `"whole-cell"` |
+| `--image-mpp` | The resolution of the image in microns-per-pixel. A value of 0.5 corresponds to 20x zoom. | `0.5` |
+| `--batch-size` | Number of images to predict on per batch. | `4` |
+
+---
+
+## Cellpose
+
+### Description
+
+The [Cellpose]( https://doi.org/10.1038/s41592-020-01018-x){:target="_blank"} module provides a further alternative segmentation method. It is implemented and maintained by an external group. Check their [GitHub repository](https://github.com/MouseLand/cellpose){:target="_blank"} for the most up-to-date information.
+
+### Usage
+
+Add `segmentation: cellpose` to [workflow parameters]({{site.baseurl}}/parameters/) to enable Cellpose. When running together with other segmentation methods, method names must be provided as a list enclosed in square brackets. For further downstream analysis of the segmentation output files within the pipeline, it is necessary to specifiy MCquant options as shown in the params.yml example. Additional Cellpose parameters can be provided to MCMICRO by including a `cellpose:` field in the module options section.
+
+* Example `params.yml`:
+
+``` yaml
+workflow:
+  segmentation: cellpose
+options:
+  mcquant: --masks *masks.tif
+```
+* Running outside of MCMICRO: [Instructions](https://github.com/MouseLand/cellpose){:target="_blank"}.
+
+### Input
+
+A stitched and registered ``.ome.tif``, preferably flat field corrected. Nextflow will use as input files from the `registration/` subdirectory for whole-slide images and from the `dearray/` subdirectory for tissue microarrays.
+
+### Output
+
+A segmentation mask, similar to the ones produced by S3segmenter. Nextflow will write these files directly to `segmentation/`.
+
+### Optional arguments
+Here you can find the most important optional arguments. Please find all options in the [Documentation](https://cellpose.readthedocs.io/en/latest/command.html){:target="_blank"}.
 
 | Name | Description | Default Value |
 | :--- | :--- | :--- |
